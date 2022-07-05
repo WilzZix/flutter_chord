@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chord/flutter_chord.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-void main() {
+import 'db_manager/db_manager.dart';
+import 'model/lyrics.model.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  Future<void> main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   String _lyrics = '';
   int transposeIncrement = 0;
   int scrollSpeed = 0;
+  DataBaseManager ref = DataBaseManager();
 
   @override
   Widget build(BuildContext context) {
@@ -41,22 +53,32 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              color: Colors.teal,
-              child: TextFormField(
-                initialValue: _lyrics,
-                style: textStyle,
-                maxLines: 50,
-                onChanged: (value) {
-                  setState(() {
-                    _lyrics = value;
-                  });
-                },
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: Container(
+          //     padding: const EdgeInsets.all(12.0),
+          //     color: Colors.teal,
+          //     child: FutureBuilder<Lyrics>(
+          //       future: ref.getLyrics(),
+          //       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          //         if(snapshot.data==null){
+          //           return const CircularProgressIndicator();
+          //         }
+          //         Lyrics lyrics = snapshot.data;
+          //         print('LYRICS  ${snapshot.data}');
+          //         return TextFormField(
+          //           initialValue: lyrics.name,
+          //           style: textStyle,
+          //           maxLines: 50,
+          //           onChanged: (value) {
+          //             setState(() {
+          //               _lyrics = value;
+          //             });
+          //           },
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ),
           Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -162,16 +184,19 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _lyrics = '''
-[C]Give me Freedom, [F]Give me fire
-[Am]Give me reason, [G]Take me higher
-[C]See the champions [F], Take the field now
-[Am]Unify us, [G]make us feel proud
- 
-[C]In the streets our, [F]hands are lifting
-[Am]As we lose our, [G]inhibition
-[C]Celebration, [F]its around us
-[Am]Every nation, [G]all around us
-''';
+
+  ref.readData() as String;
+// [C]Give me Freedom, [F]Give me fire
+// [Am]Give me reason, [G]Take me higher
+// [C]See the champions [F], Take the field now
+// [Am]Unify us, [G]make us feel proud
+//
+// [C]In the streets our, [F]hands are lifting
+// [Am]As we lose our, [G]inhibition
+// [C]Celebration, [F]its around us
+// [Am]Every nation, [G]all around us
+// ''';
+
+    // ref.writeData(_lyrics);
   }
 }
