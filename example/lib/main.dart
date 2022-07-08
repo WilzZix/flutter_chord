@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chord/flutter_chord.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,8 +40,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final chordStyle = TextStyle(fontSize: 20, color: Colors.green);
-  final textStyle = TextStyle(fontSize: 18, color: Colors.white);
+  final chordStyle = TextStyle(fontSize: 16, color: Colors.green);
+  final textStyle = TextStyle(fontSize: 14, color: Colors.white);
   String _lyrics = '';
   int transposeIncrement = 0;
   int scrollSpeed = 0;
@@ -48,6 +50,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.save),
+        onPressed: () {
+          ref.writeData(_lyrics);
+        },
+      ),
       appBar: AppBar(
         title: Text('Flutter Chord Example'),
       ),
@@ -138,32 +146,45 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               padding: const EdgeInsets.all(12.0),
               color: Colors.black,
-              child: LyricsRenderer(
-                lyrics: _lyrics,
-                textStyle: textStyle,
-                chordStyle: chordStyle,
-                onTapChord: (String chord) {
-                  print('pressed chord: $chord');
-                },
-                transposeIncrement: transposeIncrement,
-                scrollSpeed: scrollSpeed,
-                widgetPadding: 24,
-                lineHeight: 4,
-                horizontalAlignment: CrossAxisAlignment.start,
-                leadingWidget: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-                  child: Text(
-                    'Leading Widget',
-                    style: chordStyle,
-                  ),
-                ),
-                trailingWidget: Text(
-                  'Trailing Widget',
-                  style: chordStyle,
-                ),
-              ),
+              child: FutureBuilder(
+                  // future: DefaultAssetBundle.of(context)
+                  //     .loadString('assets/loadjson/lyrics.json'),
+                  future: ref.readData(),
+                  builder: (context, snapshot) {
+                    // var newData = json.decode(snapshot.data.toString());
+                    // print(newData);
+                    _lyrics = snapshot.data.toString();
+                    print('FIREBASE $_lyrics');
+
+                    return SingleChildScrollView(
+                      child: LyricsRenderer(
+                        lyrics: _lyrics,
+                        textStyle: textStyle,
+                        chordStyle: chordStyle,
+                        onTapChord: (String chord) {
+                          print('pressed chord: $chord');
+                        },
+                        transposeIncrement: transposeIncrement,
+                        scrollSpeed: scrollSpeed,
+                        widgetPadding: 24,
+                        lineHeight: 4,
+                        horizontalAlignment: CrossAxisAlignment.start,
+                        leadingWidget: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                          ),
+                          child: Text(
+                            'Leading Widget',
+                            style: chordStyle,
+                          ),
+                        ),
+                        trailingWidget: Text(
+                          'Trailing Widget',
+                          style: chordStyle,
+                        ),
+                      ),
+                    );
+                  }),
             ),
           )
         ],
@@ -174,18 +195,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // _lyrics = ref.readData();
-// [C]Give me Freedom, [F]Give me fire
-// [Am]Give me reason, [G]Take me higher
-// [C]See the champions [F], Take the field now
-// [Am]Unify us, [G]make us feel proud
-//
-// [C]In the streets our, [F]hands are lifting
-// [Am]As we lose our, [G]inhibition
-// [C]Celebration, [F]its around us
-// [Am]Every nation, [G]all around us
-// ''';
+    _lyrics = '''
+[C]Give me Freedom, [F]Give me fire
+[Am]Give me reason, [G]Take me higher
+[C]See the champions [F], Take the field now
+[Am]Unify us, [G]make us feel proud
 
-    // ref.writeData(_lyrics);
+[C]In the streets our, [F]hands are lifting
+[Am]As we lose our, [G]inhibition
+[C]Celebration, [F]its around us
+[Am]Every nation, [G]all around us
+''';
   }
 }
