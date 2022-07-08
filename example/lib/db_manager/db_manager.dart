@@ -4,14 +4,18 @@ import 'package:example/model/lyrics.model.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class DataBaseManager {
-  final DatabaseReference ref = FirebaseDatabase.instance.ref('test/RKSRTrVmPLoNwjfXsrsf');
+  final DatabaseReference ref = FirebaseDatabase.instance.ref('test/RKSRTrVmPLoNwjfXsrsf/name');
 
-  Future<void> readData() async {
+  Future<String?> readData() async {
+    String? firebaseData;
+    // ref.once("name").then((value) => null);
     ref.onValue.listen((DatabaseEvent event) {
       final data1 = event.snapshot.value;
-     // var data = json.decode(utf8.decode(data1));
-    //  print("DATALYRICS $data");
+      firebaseData = data1 as String?;
+      //  var data = json.decode(utf8.decode(data1));
+      print("DATALYRICS $data1");
     });
+    return firebaseData;
   }
 
   Future<void> writeData(String lyrics) async {

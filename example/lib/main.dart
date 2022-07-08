@@ -53,32 +53,22 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          // Expanded(
-          //   child: Container(
-          //     padding: const EdgeInsets.all(12.0),
-          //     color: Colors.teal,
-          //     child: FutureBuilder<Lyrics>(
-          //       future: ref.getLyrics(),
-          //       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          //         if(snapshot.data==null){
-          //           return const CircularProgressIndicator();
-          //         }
-          //         Lyrics lyrics = snapshot.data;
-          //         print('LYRICS  ${snapshot.data}');
-          //         return TextFormField(
-          //           initialValue: lyrics.name,
-          //           style: textStyle,
-          //           maxLines: 50,
-          //           onChanged: (value) {
-          //             setState(() {
-          //               _lyrics = value;
-          //             });
-          //           },
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              color: Colors.teal,
+              child: TextFormField(
+                initialValue: _lyrics,
+                style: textStyle,
+                maxLines: 50,
+                onChanged: (value) {
+                  setState(() {
+                    _lyrics = value;
+                  });
+                },
+              ),
+            ),
+          ),
           Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -184,8 +174,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-  ref.readData() as String;
+    // _lyrics = ref.readData();
 // [C]Give me Freedom, [F]Give me fire
 // [Am]Give me reason, [G]Take me higher
 // [C]See the champions [F], Take the field now
